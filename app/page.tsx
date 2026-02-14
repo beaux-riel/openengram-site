@@ -529,7 +529,7 @@ const tiers = [
     desc: "Self-hosted, forever",
     cta: "Get Started",
     ctaHref: "https://github.com/heybeaux/engram",
-    highlighted: false,
+    highlighted: true,
     features: [
       ["Memories", "1,000"],
       ["API calls/day", "100"],
@@ -565,7 +565,7 @@ const tiers = [
     desc: "For growing teams",
     cta: "Coming Soon",
     ctaHref: "#waitlist",
-    highlighted: true,
+    highlighted: false,
     features: [
       ["Memories", "100,000"],
       ["API calls/day", "10,000"],
@@ -618,13 +618,13 @@ function Pricing() {
             variants={fadeUp}
             className={`relative p-6 rounded-xl border ${
               tier.highlighted
-                ? "border-brand-500/50 bg-brand-500/5 glow"
+                ? "border-brand-500/50 bg-brand-500/5"
                 : "border-zinc-800 bg-zinc-900/30"
             }`}
           >
             {tier.highlighted && (
               <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-brand-500 text-black text-xs font-semibold">
-                Most Popular
+                Available Now
               </span>
             )}
             <h3 className="text-lg font-semibold">{tier.name}</h3>
