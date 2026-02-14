@@ -81,23 +81,23 @@ function Nav({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: () =
           <a href="#ecosystem" className="hover:text-white transition-colors">Ecosystem</a>
           <a href="https://github.com/heybeaux/engram" target="_blank" className="hover:text-white transition-colors">GitHub</a>
           {loggedIn && (
-            <a href="/dashboard" className="hover:text-white transition-colors">Dashboard</a>
+            <a href="https://app.openengram.ai/dashboard" className="hover:text-white transition-colors">Dashboard</a>
           )}
         </div>
         {loggedIn ? (
           <a
-            href="/dashboard"
+            href="https://app.openengram.ai/dashboard"
             className="px-4 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black text-sm font-semibold transition-colors"
           >
             Dashboard
           </a>
         ) : (
-          <button
-            onClick={onGetStarted}
+          <a
+            href="https://app.openengram.ai/signup"
             className="px-4 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black text-sm font-semibold transition-colors"
           >
             Get Started
-          </button>
+          </a>
         )}
       </div>
     </nav>
@@ -135,13 +135,13 @@ function Hero({ onGetStarted }: { onGetStarted: () => void }) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={onGetStarted}
+          <a
+            href="https://app.openengram.ai/signup"
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors"
           >
             Get Started
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </a>
           <a
             href="https://github.com/heybeaux/engram"
             target="_blank"
@@ -362,13 +362,13 @@ function MidCta({ onGetStarted }: { onGetStarted: () => void }) {
           Your Engram memories follow you everywhere.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <button
-            onClick={onGetStarted}
+          <a
+            href="https://app.openengram.ai/signup"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors"
           >
             Get Started
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </a>
           <a
             href="https://github.com/heybeaux/engram"
             target="_blank"
@@ -656,16 +656,8 @@ function Pricing({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: 
                 </li>
               ))}
             </ul>
-            <button
-              onClick={() => {
-                if (tier.name === "Free") {
-                  onGetStarted();
-                } else if (loggedIn) {
-                  handleCheckout(tier.name.toLowerCase());
-                } else {
-                  onGetStarted(tier.name.toLowerCase());
-                }
-              }}
+            <a
+              href={tier.name === "Free" ? "https://app.openengram.ai/signup" : "https://app.openengram.ai/signup?plan=" + tier.name.toLowerCase()}
               className={`block w-full text-center py-2 rounded-lg text-sm font-medium transition-colors ${
                 tier.highlighted
                   ? "bg-brand-500 hover:bg-brand-600 text-black"
@@ -673,7 +665,7 @@ function Pricing({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: 
               }`}
             >
               {tier.name === "Free" ? "Get Started" : "Subscribe"}
-            </button>
+            </a>
           </motion.div>
         ))}
       </motion.div>
