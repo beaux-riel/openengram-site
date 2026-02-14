@@ -13,10 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Open Engram — Memory Infrastructure for AI Agents",
+  title: "Engram — Memory Infrastructure for AI Agents",
   description: "Open source memory infrastructure for AI agents. Self-hosted. Actually works.",
   openGraph: {
-    title: "Open Engram — Memory Infrastructure for AI Agents",
+    title: "Engram — Memory Infrastructure for AI Agents",
     description: "Open source memory infrastructure for AI agents. Self-hosted. Actually works.",
     url: "https://openengram.ai",
     siteName: "Open Engram",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Open Engram — Memory Infrastructure for AI Agents",
+    title: "Engram — Memory Infrastructure for AI Agents",
     description: "Open source memory infrastructure for AI agents. Self-hosted. Actually works.",
   },
 };

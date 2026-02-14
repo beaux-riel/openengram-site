@@ -72,7 +72,7 @@ function Nav() {
     <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#0a0a0f]/80 border-b border-zinc-800/50">
       <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
         <a href="#" className="text-sm font-semibold">
-          ◎ <span className="text-gradient">Open Engram</span>
+          ◎ <span className="text-gradient">Engram</span>
         </a>
         <div className="hidden sm:flex items-center gap-6 text-sm text-zinc-400">
           <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
