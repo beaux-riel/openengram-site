@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { createClient } from "@supabase/supabase-js";
 import {
@@ -23,6 +23,7 @@ import {
   Lock,
   Globe,
 } from "lucide-react";
+import AuthModal, { handleCheckout } from "./components/AuthModal";
 
 // ── Supabase ───────────────────────────────────────────────────
 function getSupabase() {
@@ -67,7 +68,7 @@ function Section({
 }
 
 // ── NAV ────────────────────────────────────────────────────────
-function Nav() {
+function Nav({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: () => void }) {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#0a0a0f]/80 border-b border-zinc-800/50">
       <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
@@ -79,20 +80,32 @@ function Nav() {
           <a href="#features" className="hover:text-white transition-colors">Features</a>
           <a href="#ecosystem" className="hover:text-white transition-colors">Ecosystem</a>
           <a href="https://github.com/heybeaux/engram" target="_blank" className="hover:text-white transition-colors">GitHub</a>
+          {loggedIn && (
+            <a href="/dashboard" className="hover:text-white transition-colors">Dashboard</a>
+          )}
         </div>
-        <a
-          href="#waitlist"
-          className="px-4 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black text-sm font-semibold transition-colors"
-        >
-          Join Waitlist
-        </a>
+        {loggedIn ? (
+          <a
+            href="/dashboard"
+            className="px-4 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black text-sm font-semibold transition-colors"
+          >
+            Dashboard
+          </a>
+        ) : (
+          <button
+            onClick={onGetStarted}
+            className="px-4 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black text-sm font-semibold transition-colors"
+          >
+            Get Started
+          </button>
+        )}
       </div>
     </nav>
   );
 }
 
 // ── HERO ───────────────────────────────────────────────────────
-function Hero() {
+function Hero({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <div className="relative min-h-screen flex items-center justify-center grid-bg overflow-hidden pt-14">
       {/* Gradient orb */}
@@ -122,13 +135,13 @@ function Hero() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href="#waitlist"
+          <button
+            onClick={onGetStarted}
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors"
           >
-            Join the Waitlist
+            Get Started
             <ArrowRight className="w-4 h-4" />
-          </a>
+          </button>
           <a
             href="https://github.com/heybeaux/engram"
             target="_blank"
@@ -334,7 +347,7 @@ function Features() {
 }
 
 // ── MID-PAGE CTA ───────────────────────────────────────────────
-function MidCta() {
+function MidCta({ onGetStarted }: { onGetStarted: () => void }) {
   return (
     <Section>
       <motion.div
@@ -349,13 +362,13 @@ function MidCta() {
           Your Engram memories follow you everywhere.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <a
-            href="#waitlist"
+          <button
+            onClick={onGetStarted}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors"
           >
-            Join the Waitlist
+            Get Started
             <ArrowRight className="w-4 h-4" />
-          </a>
+          </button>
           <a
             href="https://github.com/heybeaux/engram"
             target="_blank"
@@ -596,7 +609,7 @@ const tiers = [
   },
 ];
 
-function Pricing() {
+function Pricing({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: (plan?: string) => void }) {
   return (
     <Section id="pricing">
       <motion.div variants={fadeUp} className="text-center mb-16">
@@ -643,19 +656,24 @@ function Pricing() {
                 </li>
               ))}
             </ul>
-            <a
-              href={tier.ctaHref}
-              target={tier.name === "Free" ? "_blank" : undefined}
-              className={`block text-center py-2 rounded-lg text-sm font-medium transition-colors ${
+            <button
+              onClick={() => {
+                if (tier.name === "Free") {
+                  onGetStarted();
+                } else if (loggedIn) {
+                  handleCheckout(tier.name.toLowerCase());
+                } else {
+                  onGetStarted(tier.name.toLowerCase());
+                }
+              }}
+              className={`block w-full text-center py-2 rounded-lg text-sm font-medium transition-colors ${
                 tier.highlighted
                   ? "bg-brand-500 hover:bg-brand-600 text-black"
-                  : tier.name === "Free"
-                  ? "border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white"
                   : "border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white"
               }`}
             >
-              {tier.cta}
-            </a>
+              {tier.name === "Free" ? "Get Started" : "Subscribe"}
+            </button>
           </motion.div>
         ))}
       </motion.div>
@@ -804,19 +822,46 @@ function Footer() {
 
 // ── PAGE ───────────────────────────────────────────────────────
 export default function Home() {
+  const [authOpen, setAuthOpen] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [pendingPlan, setPendingPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoggedIn(!!localStorage.getItem("engram_jwt"));
+  }, []);
+
+  const openAuth = useCallback((plan?: string) => {
+    if (plan) setPendingPlan(plan);
+    setAuthOpen(true);
+  }, []);
+
+  const onAuth = useCallback(() => {
+    setLoggedIn(true);
+    if (pendingPlan) {
+      handleCheckout(pendingPlan);
+      setPendingPlan(null);
+    }
+  }, [pendingPlan]);
+
   return (
     <main>
-      <Nav />
-      <Hero />
+      <Nav loggedIn={loggedIn} onGetStarted={() => openAuth()} />
+      <Hero onGetStarted={() => openAuth()} />
       <Problem />
       <HowItWorks />
       <Features />
-      <MidCta />
+      <MidCta onGetStarted={() => openAuth()} />
       <UseCases />
       <Ecosystem />
-      <Pricing />
+      <Pricing loggedIn={loggedIn} onGetStarted={(plan) => openAuth(plan)} />
       <Waitlist />
       <Footer />
+      <AuthModal
+        open={authOpen}
+        onClose={() => { setAuthOpen(false); setPendingPlan(null); }}
+        onAuth={onAuth}
+        pendingPlan={pendingPlan}
+      />
     </main>
   );
 }
