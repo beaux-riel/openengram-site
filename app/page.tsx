@@ -845,7 +845,7 @@ function Pricing({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: 
 }
 
 // ── WAITLIST ───────────────────────────────────────────────────
-function Waitlist() {
+function Newsletter() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -872,45 +872,44 @@ function Waitlist() {
         }
       } else {
         // Fallback: store locally + log
-        const existing = JSON.parse(localStorage.getItem("engram_waitlist") || "[]");
+        const existing = JSON.parse(localStorage.getItem("engram_newsletter") || "[]");
         if (!existing.includes(email)) {
           existing.push(email);
-          localStorage.setItem("engram_waitlist", JSON.stringify(existing));
+          localStorage.setItem("engram_newsletter", JSON.stringify(existing));
         }
-        console.log("Waitlist signup (local):", email);
+        console.log("Newsletter signup (local):", email);
       }
       setStatus("success");
       form.reset();
     } catch (err: unknown) {
-      console.error("Waitlist error:", err);
+      console.error("Newsletter error:", err);
       setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");
       setStatus("error");
     }
   }
 
   return (
-    <Section id="waitlist">
+    <Section id="newsletter">
       <motion.div
         variants={fadeUp}
         className="max-w-xl mx-auto text-center p-12 rounded-2xl border border-zinc-800 bg-zinc-900/50"
       >
         <h2 className="text-3xl font-bold mb-4">
-          Get early <span className="text-gradient">access</span>
+          Stay in the <span className="text-gradient">loop</span>
         </h2>
         <p className="text-zinc-400 mb-8">
-          Be the first to know when hosted Engram launches. No spam, just
-          updates.
+          Get updates on new features, releases, and tips for building with Engram. No spam, just signal.
         </p>
         {status === "success" ? (
           <div className="flex items-center justify-center gap-2 text-brand-400 py-4">
             <Check className="w-5 h-5" />
-            <span className="font-medium">You&apos;re on the list! We&apos;ll be in touch.</span>
+            <span className="font-medium">You&apos;re subscribed! We&apos;ll keep you posted.</span>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-            <label htmlFor="waitlist-email" className="sr-only">Email address</label>
+            <label htmlFor="newsletter-email" className="sr-only">Email address</label>
             <input
-              id="waitlist-email"
+              id="newsletter-email"
               type="email"
               name="email"
               required
@@ -923,7 +922,7 @@ function Waitlist() {
               disabled={status === "loading"}
               className="px-6 py-3 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors whitespace-nowrap disabled:opacity-50"
             >
-              {status === "loading" ? "Joining..." : "Join Waitlist"}
+              {status === "loading" ? "Subscribing..." : "Subscribe"}
             </button>
           </form>
         )}
@@ -1020,7 +1019,7 @@ export default function Home() {
       <UseCases />
       <Ecosystem />
       <Pricing loggedIn={loggedIn} onGetStarted={(plan) => openAuth(plan)} />
-      <Waitlist />
+      <Newsletter />
       <Footer />
       <AuthModal
         open={authOpen}
