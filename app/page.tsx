@@ -472,7 +472,7 @@ const comparisonRows = [
   { feature: "Cloud backup", selfHosted: "—", cloud: "✅ Automatic", hybrid: "✅" },
   { feature: "Cross-device sync", selfHosted: "—", cloud: "✅", hybrid: "✅" },
   { feature: "Setup required", selfHosted: "One command", cloud: "None", hybrid: "One command + link" },
-  { feature: "Price", selfHosted: "Free", cloud: "From $9/mo", hybrid: "From $9/mo" },
+  { feature: "Price", selfHosted: "Free", cloud: "From $4.99/mo", hybrid: "From $4.99/mo" },
 ];
 
 function Comparison() {
@@ -724,7 +724,7 @@ const tiers = [
   },
   {
     name: "Starter",
-    price: "$9",
+    price: "$4.99",
     period: "/mo",
     desc: "Cloud add-on for self-hosted",
     cta: "Subscribe",
@@ -742,7 +742,7 @@ const tiers = [
   },
   {
     name: "Pro",
-    price: "$39",
+    price: "$14.99",
     period: "/mo",
     desc: "For power users",
     cta: "Subscribe",
@@ -760,7 +760,7 @@ const tiers = [
   },
   {
     name: "Scale",
-    price: "$99",
+    price: "$29.99",
     period: "/mo",
     desc: "For teams and production",
     cta: "Subscribe",
@@ -844,7 +844,7 @@ function Pricing({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: 
   );
 }
 
-// ── NEWSLETTER ─────────────────────────────────────────────────
+// ── NEWSLETTER ───────────────────────────────────────────────────
 function Newsletter() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -857,11 +857,13 @@ function Newsletter() {
     setErrorMsg("");
 
     try {
+      // Try Supabase insert if configured
       const sb = getSupabase();
       if (sb) {
         const { error } = await sb.from("waitlist").insert({ email });
         if (error) {
           if (error.code === "23505") {
+            // Unique violation — already signed up
             setStatus("success");
             form.reset();
             return;
@@ -869,6 +871,7 @@ function Newsletter() {
           throw error;
         }
       } else {
+        // Fallback: store locally + log
         const existing = JSON.parse(localStorage.getItem("engram_newsletter") || "[]");
         if (!existing.includes(email)) {
           existing.push(email);
