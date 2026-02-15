@@ -52,9 +52,9 @@ export default function RootLayout({
               "operatingSystem": "Cloud, Linux, macOS",
               "offers": [
                 { "@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "Self-hosted — all features free" },
-                { "@type": "Offer", "price": "4.99", "priceCurrency": "USD", "description": "Starter — cloud add-on" },
-                { "@type": "Offer", "price": "14.99", "priceCurrency": "USD", "description": "Pro — cloud add-on" },
-                { "@type": "Offer", "price": "29.99", "priceCurrency": "USD", "description": "Scale — cloud add-on" }
+                { "@type": "Offer", "price": "9", "priceCurrency": "USD", "description": "Starter — cloud add-on" },
+                { "@type": "Offer", "price": "39", "priceCurrency": "USD", "description": "Pro — cloud add-on" },
+                { "@type": "Offer", "price": "99", "priceCurrency": "USD", "description": "Scale — cloud add-on" }
               ]
             })
           }}
