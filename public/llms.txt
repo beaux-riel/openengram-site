@@ -1,0 +1,22 @@
+# Engram - Memory Infrastructure for AI Agents
+> Long-term memory that makes AI agents smarter over time.
+
+Engram is open-source memory infrastructure for AI agents. It provides persistent memory storage, semantic search via multi-model ensemble embeddings, knowledge graphs, and automatic memory consolidation (Dream Cycle).
+
+## Key Features
+- Multi-model ensemble search (OpenAI, Cohere, or local models)
+- Knowledge graph with entity extraction
+- Dream Cycle (automatic memory consolidation)
+- Memory layers (Identity, Project, Session, Task)
+- Fog Index (memory health scoring)
+
+## Links
+- Website: https://openengram.ai
+- Dashboard: https://app.openengram.ai
+- API: https://api.openengram.ai
+- GitHub: https://github.com/heybeaux/engram
+- Docs: https://app.openengram.ai/docs
+
+## Pricing
+- Self-hosted: Free, unlimited
+- Cloud: Starter $9/mo, Pro $39/mo, Scale $99/mo

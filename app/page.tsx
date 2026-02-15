@@ -540,16 +540,16 @@ const tiers = [
     price: "$0",
     period: "",
     desc: "Self-hosted, forever",
-    cta: "Get Started",
+    cta: "View on GitHub",
     ctaHref: "https://github.com/heybeaux/engram",
     highlighted: true,
     features: [
-      ["Memories", "1,000"],
-      ["API calls/day", "100"],
-      ["Agents", "1"],
-      ["Dream Cycle", "❌"],
-      ["Ensemble search", "1 model"],
-      ["Knowledge graph", "❌"],
+      ["Memories", "Unlimited"],
+      ["API calls/day", "Unlimited"],
+      ["Agents", "Unlimited"],
+      ["Dream Cycle", "✅"],
+      ["Ensemble search", "Multi-model (local & cloud)"],
+      ["Knowledge graph", "✅"],
       ["Support", "Community"],
     ],
   },
@@ -558,8 +558,8 @@ const tiers = [
     price: "$9",
     period: "/mo",
     desc: "For solo builders",
-    cta: "Coming Soon",
-    ctaHref: "#waitlist",
+    cta: "Subscribe",
+    ctaHref: "https://app.openengram.ai/signup?plan=starter",
     highlighted: false,
     features: [
       ["Memories", "10,000"],
@@ -576,8 +576,8 @@ const tiers = [
     price: "$39",
     period: "/mo",
     desc: "For growing teams",
-    cta: "Coming Soon",
-    ctaHref: "#waitlist",
+    cta: "Subscribe",
+    ctaHref: "https://app.openengram.ai/signup?plan=pro",
     highlighted: false,
     features: [
       ["Memories", "100,000"],
@@ -594,8 +594,8 @@ const tiers = [
     price: "$99",
     period: "/mo",
     desc: "For production workloads",
-    cta: "Coming Soon",
-    ctaHref: "#waitlist",
+    cta: "Subscribe",
+    ctaHref: "https://app.openengram.ai/signup?plan=scale",
     highlighted: false,
     features: [
       ["Memories", "1,000,000"],
@@ -657,14 +657,16 @@ function Pricing({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: 
               ))}
             </ul>
             <a
-              href={tier.name === "Free" ? "https://app.openengram.ai/signup" : "https://app.openengram.ai/signup?plan=" + tier.name.toLowerCase()}
+              href={tier.name === "Free" ? tier.ctaHref : "https://app.openengram.ai/signup?plan=" + tier.name.toLowerCase()}
+              target={tier.name === "Free" ? "_blank" : undefined}
+              rel={tier.name === "Free" ? "noopener noreferrer" : undefined}
               className={`block w-full text-center py-2 rounded-lg text-sm font-medium transition-colors ${
                 tier.highlighted
                   ? "bg-brand-500 hover:bg-brand-600 text-black"
                   : "border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white"
               }`}
             >
-              {tier.name === "Free" ? "Get Started" : "Subscribe"}
+              {tier.cta}
             </a>
           </motion.div>
         ))}

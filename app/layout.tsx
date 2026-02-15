@@ -36,6 +36,28 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Engram",
+              "description": "Memory infrastructure for AI agents",
+              "url": "https://openengram.ai",
+              "applicationCategory": "DeveloperApplication",
+              "operatingSystem": "Cloud, Linux, macOS",
+              "offers": [
+                { "@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "Self-hosted" },
+                { "@type": "Offer", "price": "9", "priceCurrency": "USD", "description": "Starter" },
+                { "@type": "Offer", "price": "39", "priceCurrency": "USD", "description": "Pro" },
+                { "@type": "Offer", "price": "99", "priceCurrency": "USD", "description": "Scale" }
+              ]
+            })
+          }}
+        />
+      </head>
       <body suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>
