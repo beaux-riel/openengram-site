@@ -14,19 +14,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Engram — Memory Infrastructure for AI Agents",
-  description: "Open source memory infrastructure for AI agents. Self-hosted. Actually works.",
+  title: "Engram — Self-Hosted Memory Infrastructure for AI Agents",
+  description: "Open source memory infrastructure for AI agents. Self-hosted on your machine or hybrid with cloud. Local embeddings on Metal GPU, Dream Cycle, ensemble search — all free.",
+  keywords: ["AI memory", "agent memory", "self-hosted AI", "local embeddings", "LLM memory", "open source"],
   openGraph: {
-    title: "Engram — Memory Infrastructure for AI Agents",
-    description: "Open source memory infrastructure for AI agents. Self-hosted. Actually works.",
+    title: "Engram — Self-Hosted Memory Infrastructure for AI Agents",
+    description: "Your data, your machine. Self-hosted AI memory with local embeddings, Dream Cycle, and ensemble search. Add cloud when you need it.",
     url: "https://openengram.ai",
     siteName: "Open Engram",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Engram — Memory Infrastructure for AI Agents",
-    description: "Open source memory infrastructure for AI agents. Self-hosted. Actually works.",
+    title: "Engram — Self-Hosted Memory Infrastructure for AI Agents",
+    description: "Your data, your machine. Self-hosted AI memory with local embeddings, Dream Cycle, and ensemble search. Add cloud when you need it.",
   },
 };
 
@@ -50,10 +51,10 @@ export default function RootLayout({
               "applicationCategory": "DeveloperApplication",
               "operatingSystem": "Cloud, Linux, macOS",
               "offers": [
-                { "@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "Self-hosted" },
-                { "@type": "Offer", "price": "9", "priceCurrency": "USD", "description": "Starter" },
-                { "@type": "Offer", "price": "39", "priceCurrency": "USD", "description": "Pro" },
-                { "@type": "Offer", "price": "99", "priceCurrency": "USD", "description": "Scale" }
+                { "@type": "Offer", "price": "0", "priceCurrency": "USD", "description": "Self-hosted — all features free" },
+                { "@type": "Offer", "price": "4.99", "priceCurrency": "USD", "description": "Starter — cloud add-on" },
+                { "@type": "Offer", "price": "14.99", "priceCurrency": "USD", "description": "Pro — cloud add-on" },
+                { "@type": "Offer", "price": "29.99", "priceCurrency": "USD", "description": "Scale — cloud add-on" }
               ]
             })
           }}

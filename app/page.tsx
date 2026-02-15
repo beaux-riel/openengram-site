@@ -22,6 +22,12 @@ import {
   Star,
   Lock,
   Globe,
+  Server,
+  Cloud,
+  HardDrive,
+  RefreshCw,
+  Download,
+  MonitorSmartphone,
 } from "lucide-react";
 import AuthModal, { handleCheckout } from "./components/AuthModal";
 
@@ -78,7 +84,8 @@ function Nav({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: () =
         <div className="hidden sm:flex items-center gap-6 text-sm text-zinc-400">
           <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
           <a href="#features" className="hover:text-white transition-colors">Features</a>
-          <a href="#ecosystem" className="hover:text-white transition-colors">Ecosystem</a>
+          <a href="#self-hosted" className="hover:text-white transition-colors">Self-Host</a>
+          <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
           <a href="https://github.com/heybeaux/engram" target="_blank" className="hover:text-white transition-colors">GitHub</a>
           {loggedIn && (
             <a href="https://app.openengram.ai/dashboard" className="hover:text-white transition-colors">Dashboard</a>
@@ -136,19 +143,20 @@ function Hero({ onGetStarted }: { onGetStarted: () => void }) {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="https://app.openengram.ai/signup"
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors"
-          >
-            Get Started
-            <ArrowRight className="w-4 h-4" />
-          </a>
-          <a
             href="https://github.com/heybeaux/engram"
             target="_blank"
+            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            Self-Host Free
+          </a>
+          <a
+            href="https://app.openengram.ai/signup"
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white font-semibold transition-colors"
           >
-            <Github className="w-5 h-5" />
-            View on GitHub
+            <Cloud className="w-5 h-5" />
+            Try Cloud
+            <ArrowRight className="w-4 h-4" />
           </a>
         </div>
 
@@ -346,6 +354,166 @@ function Features() {
   );
 }
 
+// ── SELF-HOSTED ────────────────────────────────────────────────
+const selfHostedPoints = [
+  {
+    icon: HardDrive,
+    title: "Your data, your machine",
+    desc: "Everything runs locally. Your memories never leave your hardware. Zero cloud dependency, total privacy.",
+  },
+  {
+    icon: Cpu,
+    title: "Local embeddings on Metal GPU",
+    desc: "Run 4 embedding models on Apple Silicon or CUDA. No API costs, no rate limits, no latency penalties.",
+  },
+  {
+    icon: Zap,
+    title: "Running in minutes",
+    desc: "Setup wizard walks you through account creation and model configuration. One command to start.",
+  },
+  {
+    icon: Lock,
+    title: "All features unlocked",
+    desc: "No plan limits. No artificial restrictions. Dream Cycle, ensemble search, code search, knowledge graph — everything, free.",
+  },
+];
+
+function SelfHosted() {
+  return (
+    <Section id="self-hosted">
+      <motion.div variants={fadeUp} className="text-center mb-16">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+          Self-host <span className="text-gradient">everything</span>
+        </h2>
+        <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
+          Engram was built self-hosted first. Every feature works on your machine
+          with no cloud account required.
+        </p>
+      </motion.div>
+
+      <motion.div variants={stagger} className="grid md:grid-cols-2 gap-6">
+        {selfHostedPoints.map((p) => (
+          <motion.div
+            key={p.title}
+            variants={fadeUp}
+            className="p-6 rounded-xl border border-brand-500/20 bg-brand-500/5"
+          >
+            <p.icon className="w-6 h-6 text-brand-400 mb-3" />
+            <h3 className="font-semibold mb-2">{p.title}</h3>
+            <p className="text-sm text-zinc-400">{p.desc}</p>
+          </motion.div>
+        ))}
+      </motion.div>
+    </Section>
+  );
+}
+
+// ── HYBRID MODE ────────────────────────────────────────────────
+const hybridPoints = [
+  {
+    icon: Cloud,
+    title: "Cloud ensemble models",
+    desc: "Add OpenAI and Cohere embeddings alongside your local models for higher recall accuracy.",
+  },
+  {
+    icon: Shield,
+    title: "Cloud backup",
+    desc: "Back up your local memories to OpenEngram Cloud. Peace of mind without giving up local control.",
+  },
+  {
+    icon: MonitorSmartphone,
+    title: "Cross-device sync",
+    desc: "Access your memories from any device through the cloud dashboard. Your local instance stays the source of truth.",
+  },
+  {
+    icon: RefreshCw,
+    title: "Add cloud when you need it",
+    desc: "Start fully local. Link to OpenEngram Cloud later from Settings. No migration, no data loss.",
+  },
+];
+
+function HybridMode() {
+  return (
+    <Section id="hybrid">
+      <motion.div variants={fadeUp} className="text-center mb-16">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+          Start local, add <span className="text-gradient">cloud</span> when you need it
+        </h2>
+        <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
+          Hybrid mode connects your self-hosted instance to OpenEngram Cloud
+          for premium features — without replacing what you already have.
+        </p>
+      </motion.div>
+
+      <motion.div variants={stagger} className="grid md:grid-cols-2 gap-6">
+        {hybridPoints.map((p) => (
+          <motion.div
+            key={p.title}
+            variants={fadeUp}
+            className="p-6 rounded-xl border border-zinc-800/50 hover:border-zinc-700 transition-colors"
+          >
+            <p.icon className="w-6 h-6 text-blue-400 mb-3" />
+            <h3 className="font-semibold mb-2">{p.title}</h3>
+            <p className="text-sm text-zinc-400">{p.desc}</p>
+          </motion.div>
+        ))}
+      </motion.div>
+    </Section>
+  );
+}
+
+// ── COMPARISON TABLE ───────────────────────────────────────────
+const comparisonRows = [
+  { feature: "Local embedding models", selfHosted: "✅ All 4 models", cloud: "—", hybrid: "✅ All 4 models" },
+  { feature: "Cloud ensemble models", selfHosted: "—", cloud: "✅ OpenAI + Cohere", hybrid: "✅ OpenAI + Cohere" },
+  { feature: "Code Search", selfHosted: "✅", cloud: "—", hybrid: "✅" },
+  { feature: "Dream Cycle", selfHosted: "✅", cloud: "✅", hybrid: "✅" },
+  { feature: "Ensemble search", selfHosted: "✅ Local models", cloud: "✅ Cloud models", hybrid: "✅ Both" },
+  { feature: "Cloud backup", selfHosted: "—", cloud: "✅ Automatic", hybrid: "✅" },
+  { feature: "Cross-device sync", selfHosted: "—", cloud: "✅", hybrid: "✅" },
+  { feature: "Setup required", selfHosted: "One command", cloud: "None", hybrid: "One command + link" },
+  { feature: "Price", selfHosted: "Free", cloud: "From $4.99/mo", hybrid: "From $4.99/mo" },
+];
+
+function Comparison() {
+  return (
+    <Section id="comparison">
+      <motion.div variants={fadeUp} className="text-center mb-16">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+          Pick your <span className="text-gradient">path</span>
+        </h2>
+        <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
+          Self-hosted gives you everything for free. Cloud adds managed convenience.
+          Hybrid gives you both.
+        </p>
+      </motion.div>
+
+      <motion.div variants={fadeUp} className="overflow-x-auto">
+        <table className="w-full max-w-4xl mx-auto text-sm">
+          <thead>
+            <tr className="border-b border-zinc-800">
+              <th className="text-left py-3 px-4 text-zinc-500 font-medium">Feature</th>
+              <th className="text-center py-3 px-4 text-brand-400 font-semibold">Self-Hosted</th>
+              <th className="text-center py-3 px-4 text-zinc-300 font-semibold">Cloud</th>
+              <th className="text-center py-3 px-4 text-blue-400 font-semibold">Hybrid</th>
+            </tr>
+          </thead>
+          <tbody>
+            {comparisonRows.map((row) => (
+              <tr key={row.feature} className="border-b border-zinc-800/50">
+                <td className="py-3 px-4 text-zinc-300">{row.feature}</td>
+                <td className="py-3 px-4 text-center text-zinc-400">{row.selfHosted}</td>
+                <td className="py-3 px-4 text-center text-zinc-400">{row.cloud}</td>
+                <td className="py-3 px-4 text-center text-zinc-400">{row.hybrid}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </motion.div>
+    </Section>
+  );
+}
+
 // ── MID-PAGE CTA ───────────────────────────────────────────────
 function MidCta({ onGetStarted }: { onGetStarted: () => void }) {
   return (
@@ -363,19 +531,20 @@ function MidCta({ onGetStarted }: { onGetStarted: () => void }) {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="https://app.openengram.ai/signup"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors"
-          >
-            Get Started
-            <ArrowRight className="w-4 h-4" />
-          </a>
-          <a
             href="https://github.com/heybeaux/engram"
             target="_blank"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors"
+          >
+            <Server className="w-4 h-4" />
+            Self-Host Free
+          </a>
+          <a
+            href="https://app.openengram.ai/signup"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white font-semibold transition-colors"
           >
-            <Github className="w-5 h-5" />
-            Self-host now — it&apos;s free
+            <Cloud className="w-5 h-5" />
+            Try Cloud
+            <ArrowRight className="w-4 h-4" />
           </a>
         </div>
       </motion.div>
@@ -539,71 +708,71 @@ const tiers = [
     name: "Free",
     price: "$0",
     period: "",
-    desc: "Self-hosted, forever",
-    cta: "View on GitHub",
+    desc: "Self-hosted, all features",
+    cta: "Self-Host Now",
     ctaHref: "https://github.com/heybeaux/engram",
     highlighted: true,
     features: [
-      ["Memories", "Unlimited"],
-      ["API calls/day", "Unlimited"],
-      ["Agents", "Unlimited"],
+      ["Local embeddings", "All 4 models"],
+      ["Code Search", "✅"],
       ["Dream Cycle", "✅"],
-      ["Ensemble search", "Multi-model (local & cloud)"],
+      ["Ensemble search", "Local models"],
       ["Knowledge graph", "✅"],
+      ["Memories", "Unlimited"],
       ["Support", "Community"],
     ],
   },
   {
     name: "Starter",
-    price: "$9",
+    price: "$4.99",
     period: "/mo",
-    desc: "For solo builders",
+    desc: "Cloud add-on for self-hosted",
     cta: "Subscribe",
     ctaHref: "https://app.openengram.ai/signup?plan=starter",
     highlighted: false,
     features: [
-      ["Memories", "10,000"],
-      ["API calls/day", "1,000"],
-      ["Agents", "3"],
-      ["Dream Cycle", "✅ Daily"],
-      ["Ensemble search", "2 models"],
-      ["Knowledge graph", "❌"],
+      ["Everything in Free", "✅"],
+      ["Cloud ensemble", "OpenAI + Cohere"],
+      ["Cloud backup", "✅"],
+      ["Cross-device sync", "✅"],
+      ["Cloud memories", "10,000"],
+      ["Cloud API calls/day", "1,000"],
       ["Support", "Email"],
     ],
   },
   {
     name: "Pro",
-    price: "$39",
+    price: "$14.99",
     period: "/mo",
-    desc: "For growing teams",
+    desc: "For power users",
     cta: "Subscribe",
     ctaHref: "https://app.openengram.ai/signup?plan=pro",
     highlighted: false,
     features: [
-      ["Memories", "100,000"],
-      ["API calls/day", "10,000"],
-      ["Agents", "10"],
-      ["Dream Cycle", "✅ Daily"],
-      ["Ensemble search", "4 models"],
-      ["Knowledge graph", "✅"],
+      ["Everything in Starter", "✅"],
+      ["Cloud ensemble", "All models"],
+      ["Cloud backup", "✅ Priority"],
+      ["Cross-device sync", "✅"],
+      ["Cloud memories", "100,000"],
+      ["Cloud API calls/day", "10,000"],
       ["Support", "Priority"],
     ],
   },
   {
     name: "Scale",
-    price: "$99",
+    price: "$29.99",
     period: "/mo",
-    desc: "For production workloads",
+    desc: "For teams and production",
     cta: "Subscribe",
     ctaHref: "https://app.openengram.ai/signup?plan=scale",
     highlighted: false,
     features: [
-      ["Memories", "1,000,000"],
-      ["API calls/day", "100,000"],
-      ["Agents", "Unlimited"],
-      ["Dream Cycle", "✅ Hourly"],
-      ["Ensemble search", "4 models"],
-      ["Knowledge graph", "✅"],
+      ["Everything in Pro", "✅"],
+      ["Cloud ensemble", "All models"],
+      ["Cloud backup", "✅ Real-time"],
+      ["Cross-device sync", "✅"],
+      ["Cloud memories", "1,000,000"],
+      ["Cloud API calls/day", "100,000"],
       ["Support", "Dedicated"],
     ],
   },
@@ -617,7 +786,7 @@ function Pricing({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: 
           Simple <span className="text-gradient">pricing</span>
         </h2>
         <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-          Self-host free forever, or let us handle the infrastructure.
+          Self-host with all features free. Cloud subscriptions add ensemble models, backup, and sync.
         </p>
       </motion.div>
 
@@ -844,6 +1013,9 @@ export default function Home() {
       <Problem />
       <HowItWorks />
       <Features />
+      <SelfHosted />
+      <HybridMode />
+      <Comparison />
       <MidCta onGetStarted={() => openAuth()} />
       <UseCases />
       <Ecosystem />
