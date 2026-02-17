@@ -472,7 +472,7 @@ const comparisonRows = [
   { feature: "Cloud backup", selfHosted: "—", cloud: "✅ Automatic", hybrid: "✅" },
   { feature: "Cross-device sync", selfHosted: "—", cloud: "✅", hybrid: "✅" },
   { feature: "Setup required", selfHosted: "One command", cloud: "None", hybrid: "One command + link" },
-  { feature: "Price", selfHosted: "Free", cloud: "From $4.99/mo", hybrid: "From $4.99/mo" },
+  { feature: "Price", selfHosted: "Free", cloud: "From $9/mo", hybrid: "From $9/mo" },
 ];
 
 function Comparison() {
@@ -724,7 +724,7 @@ const tiers = [
   },
   {
     name: "Starter",
-    price: "$4.99",
+    price: "$9",
     period: "/mo",
     desc: "Cloud add-on for self-hosted",
     cta: "Subscribe",
@@ -742,7 +742,7 @@ const tiers = [
   },
   {
     name: "Pro",
-    price: "$14.99",
+    price: "$39",
     period: "/mo",
     desc: "For power users",
     cta: "Subscribe",
@@ -760,7 +760,7 @@ const tiers = [
   },
   {
     name: "Scale",
-    price: "$29.99",
+    price: "$99",
     period: "/mo",
     desc: "For teams and production",
     cta: "Subscribe",
