@@ -33,9 +33,9 @@ import AuthModal, { handleCheckout } from "./components/AuthModal";
 
 // ── Supabase ───────────────────────────────────────────────────
 function getSupabase() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://uwnyuvhgzuqxbejakgtg.supabase.co";
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!key) return null;
+  if (!url || !key) return null;
   return createClient(url, key);
 }
 
@@ -86,7 +86,7 @@ function Nav({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: () =
           <a href="#features" className="hover:text-white transition-colors">Features</a>
           <a href="#self-hosted" className="hover:text-white transition-colors">Self-Host</a>
           <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
-          <a href="https://github.com/heybeaux/engram" target="_blank" className="hover:text-white transition-colors">GitHub</a>
+          <a href="https://github.com/openengram/engram" target="_blank" className="hover:text-white transition-colors">GitHub</a>
           {loggedIn && (
             <a href="https://app.openengram.ai/dashboard" className="hover:text-white transition-colors">Dashboard</a>
           )}
@@ -143,7 +143,7 @@ function Hero({ onGetStarted }: { onGetStarted: () => void }) {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="https://github.com/heybeaux/engram"
+            href="https://github.com/openengram/engram"
             target="_blank"
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors"
           >
@@ -531,21 +531,21 @@ function MidCta({ onGetStarted }: { onGetStarted: () => void }) {
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <a
-            href="https://github.com/heybeaux/engram"
+            href="https://github.com/openengram/engram"
             target="_blank"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors"
           >
             <Server className="w-4 h-4" />
             Self-Host Free
           </a>
-          <a
-            href="https://app.openengram.ai/signup"
+          <button
+            onClick={onGetStarted}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white font-semibold transition-colors"
           >
             <Cloud className="w-5 h-5" />
             Try Cloud
             <ArrowRight className="w-4 h-4" />
-          </a>
+          </button>
         </div>
       </motion.div>
     </Section>
@@ -602,42 +602,42 @@ const ecosystem = [
     icon: Brain,
     name: "Engram Core",
     desc: "Memory API with extraction, classification, scoring, and temporal reasoning",
-    repo: "https://github.com/heybeaux/engram",
+    repo: "https://github.com/openengram/engram",
     color: "brand",
   },
   {
     icon: Cpu,
     name: "Engram Embed",
     desc: "Local embeddings on Metal GPU — multiple models, zero API costs",
-    repo: "https://github.com/heybeaux/engram-embed",
+    repo: "https://github.com/openengram/engram-embed",
     color: "blue",
   },
   {
     icon: Code2,
     name: "Engram Code",
     desc: "Semantic code search across your entire codebase",
-    repo: "https://github.com/heybeaux/engram-code",
+    repo: "https://github.com/openengram/engram-code",
     color: "purple",
   },
   {
     icon: LayoutDashboard,
     name: "Dashboard",
     desc: "Real-time monitoring, health scores, knowledge graph visualization",
-    repo: "https://github.com/heybeaux/engram-dashboard",
+    repo: "https://github.com/openengram/engram-dashboard",
     color: "orange",
   },
   {
     icon: Plug,
     name: "MCP Server",
     desc: "Drop-in memory for Claude Desktop, Cursor, Windsurf, and any MCP client",
-    repo: "https://github.com/heybeaux/engram-mcp",
+    repo: "https://github.com/openengram/engram-mcp",
     color: "cyan",
   },
   {
     icon: Package,
     name: "TypeScript SDK",
     desc: "engram.remember() and engram.recall() — fully typed, 18 methods",
-    repo: "https://github.com/heybeaux/engram-client",
+    repo: "https://github.com/openengram/engram-client",
     color: "pink",
   },
 ];
@@ -710,7 +710,7 @@ const tiers = [
     period: "",
     desc: "Self-hosted, all features",
     cta: "Self-Host Now",
-    ctaHref: "https://github.com/heybeaux/engram",
+    ctaHref: "https://github.com/openengram/engram",
     highlighted: true,
     features: [
       ["Local embeddings", "All 4 models"],
@@ -825,18 +825,31 @@ function Pricing({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: 
                 </li>
               ))}
             </ul>
-            <a
-              href={tier.name === "Free" ? tier.ctaHref : "https://app.openengram.ai/signup?plan=" + tier.name.toLowerCase()}
-              target={tier.name === "Free" ? "_blank" : undefined}
-              rel={tier.name === "Free" ? "noopener noreferrer" : undefined}
-              className={`block w-full text-center py-2 rounded-lg text-sm font-medium transition-colors ${
-                tier.highlighted
-                  ? "bg-brand-500 hover:bg-brand-600 text-black"
-                  : "border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white"
-              }`}
-            >
-              {tier.cta}
-            </a>
+            {tier.name === "Free" ? (
+              <a
+                href={tier.ctaHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`block w-full text-center py-2 rounded-lg text-sm font-medium transition-colors ${
+                  tier.highlighted
+                    ? "bg-brand-500 hover:bg-brand-600 text-black"
+                    : "border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white"
+                }`}
+              >
+                {tier.cta}
+              </a>
+            ) : (
+              <button
+                onClick={() => onGetStarted(tier.name.toLowerCase())}
+                className={`block w-full text-center py-2 rounded-lg text-sm font-medium transition-colors ${
+                  tier.highlighted
+                    ? "bg-brand-500 hover:bg-brand-600 text-black"
+                    : "border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white"
+                }`}
+              >
+                {tier.cta}
+              </button>
+            )}
           </motion.div>
         ))}
       </motion.div>
@@ -936,12 +949,12 @@ function Newsletter() {
 
 // ── FOOTER ─────────────────────────────────────────────────────
 const repos = [
-  { name: "Core API", href: "https://github.com/heybeaux/engram" },
-  { name: "MCP Server", href: "https://github.com/heybeaux/engram-mcp" },
-  { name: "Dashboard", href: "https://github.com/heybeaux/engram-dashboard" },
-  { name: "Embeddings", href: "https://github.com/heybeaux/engram-embed" },
-  { name: "Code Search", href: "https://github.com/heybeaux/engram-code" },
-  { name: "SDK", href: "https://github.com/heybeaux/engram-client" },
+  { name: "Core API", href: "https://github.com/openengram/engram" },
+  { name: "MCP Server", href: "https://github.com/openengram/engram-mcp" },
+  { name: "Dashboard", href: "https://github.com/openengram/engram-dashboard" },
+  { name: "Embeddings", href: "https://github.com/openengram/engram-embed" },
+  { name: "Code Search", href: "https://github.com/openengram/engram-code" },
+  { name: "SDK", href: "https://github.com/openengram/engram-client" },
 ];
 
 function Footer() {
@@ -971,7 +984,7 @@ function Footer() {
         </div>
 
         <a
-          href="https://github.com/heybeaux/engram"
+          href="https://github.com/openengram/engram"
           target="_blank"
           className="text-zinc-500 hover:text-white transition-colors"
         >
