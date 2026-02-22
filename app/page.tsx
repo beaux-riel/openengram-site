@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { createClient } from "@supabase/supabase-js";
 import {
@@ -28,8 +28,8 @@ import {
   RefreshCw,
   Download,
   MonitorSmartphone,
+  Mail,
 } from "lucide-react";
-import AuthModal, { handleCheckout } from "./components/AuthModal";
 
 // ── Supabase ───────────────────────────────────────────────────
 function getSupabase() {
@@ -73,8 +73,87 @@ function Section({
   );
 }
 
+// ── Waitlist Form (reusable) ───────────────────────────────────
+function WaitlistForm({ compact = false }: { compact?: boolean }) {
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.target as HTMLFormElement;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    setStatus("loading");
+    setErrorMsg("");
+
+    try {
+      const sb = getSupabase();
+      if (sb) {
+        const { error } = await sb.from("waitlist").insert({ email });
+        if (error) {
+          if (error.code === "23505") {
+            setStatus("success");
+            form.reset();
+            return;
+          }
+          throw error;
+        }
+      } else {
+        const existing = JSON.parse(localStorage.getItem("engram_waitlist") || "[]");
+        if (!existing.includes(email)) {
+          existing.push(email);
+          localStorage.setItem("engram_waitlist", JSON.stringify(existing));
+        }
+        console.log("Waitlist signup (local):", email);
+      }
+      setStatus("success");
+      form.reset();
+    } catch (err: unknown) {
+      console.error("Waitlist error:", err);
+      setErrorMsg(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setStatus("error");
+    }
+  }
+
+  if (status === "success") {
+    return (
+      <div className="flex items-center justify-center gap-2 text-brand-400 py-4">
+        <Check className="w-5 h-5" />
+        <span className="font-medium">You&apos;re on the list! We&apos;ll be in touch.</span>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <form onSubmit={handleSubmit} className={`flex flex-col sm:flex-row gap-3 ${compact ? "" : "max-w-md mx-auto"}`}>
+        <label htmlFor={compact ? "waitlist-email-compact" : "waitlist-email"} className="sr-only">Email address</label>
+        <input
+          id={compact ? "waitlist-email-compact" : "waitlist-email"}
+          type="email"
+          name="email"
+          required
+          placeholder="you@example.com"
+          disabled={status === "loading"}
+          className="flex-1 px-4 py-3 rounded-lg bg-zinc-800 border border-zinc-700 focus:border-brand-500 focus:outline-none text-white placeholder:text-zinc-500 disabled:opacity-50"
+        />
+        <button
+          type="submit"
+          disabled={status === "loading"}
+          className="px-6 py-3 rounded-lg bg-brand-500 hover:bg-brand-600 text-black font-semibold transition-colors whitespace-nowrap disabled:opacity-50 inline-flex items-center gap-2 justify-center"
+        >
+          <Mail className="w-4 h-4" />
+          {status === "loading" ? "Joining..." : "Join Waitlist"}
+        </button>
+      </form>
+      {status === "error" && (
+        <p className="text-red-400 text-sm mt-3 text-center">{errorMsg}</p>
+      )}
+    </>
+  );
+}
+
 // ── NAV ────────────────────────────────────────────────────────
-function Nav({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: () => void }) {
+function Nav() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-[#0a0a0f]/80 border-b border-zinc-800/50">
       <div className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
@@ -85,34 +164,22 @@ function Nav({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: () =
           <a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a>
           <a href="#features" className="hover:text-white transition-colors">Features</a>
           <a href="#self-hosted" className="hover:text-white transition-colors">Self-Host</a>
-          <a href="#pricing" className="hover:text-white transition-colors">Pricing</a>
+          <a href="#cloud" className="hover:text-white transition-colors">Cloud</a>
           <a href="https://github.com/openengram/engram" target="_blank" className="hover:text-white transition-colors">GitHub</a>
-          {loggedIn && (
-            <a href="https://app.openengram.ai/dashboard" className="hover:text-white transition-colors">Dashboard</a>
-          )}
         </div>
-        {loggedIn ? (
-          <a
-            href="https://app.openengram.ai/dashboard"
-            className="px-4 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black text-sm font-semibold transition-colors"
-          >
-            Dashboard
-          </a>
-        ) : (
-          <a
-            href="https://app.openengram.ai/signup"
-            className="px-4 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black text-sm font-semibold transition-colors"
-          >
-            Get Started
-          </a>
-        )}
+        <a
+          href="#cloud"
+          className="px-4 py-1.5 rounded-lg bg-brand-500 hover:bg-brand-600 text-black text-sm font-semibold transition-colors"
+        >
+          Join Waitlist
+        </a>
       </div>
     </nav>
   );
 }
 
 // ── HERO ───────────────────────────────────────────────────────
-function Hero({ onGetStarted }: { onGetStarted: () => void }) {
+function Hero() {
   return (
     <div className="relative min-h-screen flex items-center justify-center grid-bg overflow-hidden pt-14">
       {/* Gradient orb */}
@@ -151,11 +218,11 @@ function Hero({ onGetStarted }: { onGetStarted: () => void }) {
             Self-Host Free
           </a>
           <a
-            href="https://app.openengram.ai/signup"
+            href="#cloud"
             className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white font-semibold transition-colors"
           >
             <Cloud className="w-5 h-5" />
-            Try Cloud
+            Cloud Waitlist
             <ArrowRight className="w-4 h-4" />
           </a>
         </div>
@@ -472,7 +539,7 @@ const comparisonRows = [
   { feature: "Cloud backup", selfHosted: "—", cloud: "✅ Automatic", hybrid: "✅" },
   { feature: "Cross-device sync", selfHosted: "—", cloud: "✅", hybrid: "✅" },
   { feature: "Setup required", selfHosted: "One command", cloud: "None", hybrid: "One command + link" },
-  { feature: "Price", selfHosted: "Free", cloud: "From $9/mo", hybrid: "From $9/mo" },
+  { feature: "Price", selfHosted: "Free forever", cloud: "Coming soon", hybrid: "Coming soon" },
 ];
 
 function Comparison() {
@@ -515,7 +582,7 @@ function Comparison() {
 }
 
 // ── MID-PAGE CTA ───────────────────────────────────────────────
-function MidCta({ onGetStarted }: { onGetStarted: () => void }) {
+function MidCta() {
   return (
     <Section>
       <motion.div
@@ -538,14 +605,14 @@ function MidCta({ onGetStarted }: { onGetStarted: () => void }) {
             <Server className="w-4 h-4" />
             Self-Host Free
           </a>
-          <button
-            onClick={onGetStarted}
+          <a
+            href="#cloud"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white font-semibold transition-colors"
           >
             <Cloud className="w-5 h-5" />
-            Try Cloud
+            Join Cloud Waitlist
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </a>
         </div>
       </motion.div>
     </Section>
@@ -702,156 +769,29 @@ function Ecosystem() {
   );
 }
 
-// ── PRICING ────────────────────────────────────────────────────
-const tiers = [
-  {
-    name: "Free",
-    price: "$0",
-    period: "",
-    desc: "Self-hosted, all features",
-    cta: "Self-Host Now",
-    ctaHref: "https://github.com/openengram/engram",
-    highlighted: true,
-    features: [
-      ["Local embeddings", "All 4 models"],
-      ["Code Search", "✅"],
-      ["Dream Cycle", "✅"],
-      ["Ensemble search", "Local models"],
-      ["Knowledge graph", "✅"],
-      ["Memories", "Unlimited"],
-      ["Support", "Community"],
-    ],
-  },
-  {
-    name: "Starter",
-    price: "$9",
-    period: "/mo",
-    desc: "Cloud add-on for self-hosted",
-    cta: "Subscribe",
-    ctaHref: "https://app.openengram.ai/signup?plan=starter",
-    highlighted: false,
-    features: [
-      ["Everything in Free", "✅"],
-      ["Cloud ensemble", "OpenAI + Cohere"],
-      ["Cloud backup", "✅"],
-      ["Cross-device sync", "✅"],
-      ["Cloud memories", "10,000"],
-      ["Cloud API calls/day", "1,000"],
-      ["Support", "Email"],
-    ],
-  },
-  {
-    name: "Pro",
-    price: "$39",
-    period: "/mo",
-    desc: "For power users",
-    cta: "Subscribe",
-    ctaHref: "https://app.openengram.ai/signup?plan=pro",
-    highlighted: false,
-    features: [
-      ["Everything in Starter", "✅"],
-      ["Cloud ensemble", "All models"],
-      ["Cloud backup", "✅ Priority"],
-      ["Cross-device sync", "✅"],
-      ["Cloud memories", "100,000"],
-      ["Cloud API calls/day", "10,000"],
-      ["Support", "Priority"],
-    ],
-  },
-  {
-    name: "Scale",
-    price: "$99",
-    period: "/mo",
-    desc: "For teams and production",
-    cta: "Subscribe",
-    ctaHref: "https://app.openengram.ai/signup?plan=scale",
-    highlighted: false,
-    features: [
-      ["Everything in Pro", "✅"],
-      ["Cloud ensemble", "All models"],
-      ["Cloud backup", "✅ Real-time"],
-      ["Cross-device sync", "✅"],
-      ["Cloud memories", "1,000,000"],
-      ["Cloud API calls/day", "100,000"],
-      ["Support", "Dedicated"],
-    ],
-  },
-];
-
-function Pricing({ loggedIn, onGetStarted }: { loggedIn: boolean; onGetStarted: (plan?: string) => void }) {
+// ── CLOUD WAITLIST (replaces Pricing) ──────────────────────────
+function CloudWaitlist() {
   return (
-    <Section id="pricing">
-      <motion.div variants={fadeUp} className="text-center mb-16">
-        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-          Simple <span className="text-gradient">pricing</span>
-        </h2>
-        <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-          Self-host with all features free. Cloud subscriptions add ensemble models, backup, and sync.
-        </p>
-      </motion.div>
-
+    <Section id="cloud">
       <motion.div
-        variants={stagger}
-        className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto"
+        variants={fadeUp}
+        className="max-w-2xl mx-auto text-center p-12 rounded-2xl border border-brand-500/20 bg-gradient-to-b from-brand-500/5 to-transparent"
       >
-        {tiers.map((tier) => (
-          <motion.div
-            key={tier.name}
-            variants={fadeUp}
-            className={`relative p-6 rounded-xl border ${
-              tier.highlighted
-                ? "border-brand-500/50 bg-brand-500/5"
-                : "border-zinc-800 bg-zinc-900/30"
-            }`}
-          >
-            {tier.highlighted && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full bg-brand-500 text-black text-xs font-semibold">
-                Available Now
-              </span>
-            )}
-            <h3 className="text-lg font-semibold">{tier.name}</h3>
-            <p className="text-zinc-500 text-xs mb-3">{tier.desc}</p>
-            <div className="mb-5">
-              <span className="text-3xl font-bold">{tier.price}</span>
-              {tier.period && (
-                <span className="text-zinc-500 text-sm">{tier.period}</span>
-              )}
-            </div>
-            <ul className="space-y-2 mb-6">
-              {tier.features.map(([label, value]) => (
-                <li key={label} className="flex justify-between text-xs">
-                  <span className="text-zinc-500">{label}</span>
-                  <span className="text-zinc-300 font-medium">{value}</span>
-                </li>
-              ))}
-            </ul>
-            {tier.name === "Free" ? (
-              <a
-                href={tier.ctaHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`block w-full text-center py-2 rounded-lg text-sm font-medium transition-colors ${
-                  tier.highlighted
-                    ? "bg-brand-500 hover:bg-brand-600 text-black"
-                    : "border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white"
-                }`}
-              >
-                {tier.cta}
-              </a>
-            ) : (
-              <button
-                onClick={() => onGetStarted(tier.name.toLowerCase())}
-                className={`block w-full text-center py-2 rounded-lg text-sm font-medium transition-colors ${
-                  tier.highlighted
-                    ? "bg-brand-500 hover:bg-brand-600 text-black"
-                    : "border border-zinc-700 hover:border-zinc-500 text-zinc-300 hover:text-white"
-                }`}
-              >
-                {tier.cta}
-              </button>
-            )}
-          </motion.div>
-        ))}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand-500/20 bg-brand-500/5 text-brand-400 text-sm mb-6">
+          <Cloud className="w-4 h-4" />
+          <span>Coming Soon</span>
+        </div>
+        <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+          Hosted <span className="text-gradient">cloud</span> is coming soon
+        </h2>
+        <p className="text-zinc-400 text-lg mb-4 max-w-lg mx-auto">
+          Cloud ensemble models, automatic backup, cross-device sync — all managed for you.
+          Join the waitlist to get early access.
+        </p>
+        <p className="text-zinc-500 text-sm mb-8">
+          Self-hosting is available now with all features, completely free.
+        </p>
+        <WaitlistForm />
       </motion.div>
     </Section>
   );
@@ -870,13 +810,11 @@ function Newsletter() {
     setErrorMsg("");
 
     try {
-      // Try Supabase insert if configured
       const sb = getSupabase();
       if (sb) {
         const { error } = await sb.from("waitlist").insert({ email });
         if (error) {
           if (error.code === "23505") {
-            // Unique violation — already signed up
             setStatus("success");
             form.reset();
             return;
@@ -884,7 +822,6 @@ function Newsletter() {
           throw error;
         }
       } else {
-        // Fallback: store locally + log
         const existing = JSON.parse(localStorage.getItem("engram_newsletter") || "[]");
         if (!existing.includes(email)) {
           existing.push(email);
@@ -997,49 +934,22 @@ function Footer() {
 
 // ── PAGE ───────────────────────────────────────────────────────
 export default function Home() {
-  const [authOpen, setAuthOpen] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [pendingPlan, setPendingPlan] = useState<string | null>(null);
-
-  useEffect(() => {
-    setLoggedIn(!!localStorage.getItem("engram_jwt"));
-  }, []);
-
-  const openAuth = useCallback((plan?: string) => {
-    if (plan) setPendingPlan(plan);
-    setAuthOpen(true);
-  }, []);
-
-  const onAuth = useCallback(() => {
-    setLoggedIn(true);
-    if (pendingPlan) {
-      handleCheckout(pendingPlan);
-      setPendingPlan(null);
-    }
-  }, [pendingPlan]);
-
   return (
     <main>
-      <Nav loggedIn={loggedIn} onGetStarted={() => openAuth()} />
-      <Hero onGetStarted={() => openAuth()} />
+      <Nav />
+      <Hero />
       <Problem />
       <HowItWorks />
       <Features />
       <SelfHosted />
       <HybridMode />
       <Comparison />
-      <MidCta onGetStarted={() => openAuth()} />
+      <MidCta />
       <UseCases />
       <Ecosystem />
-      <Pricing loggedIn={loggedIn} onGetStarted={(plan) => openAuth(plan)} />
+      <CloudWaitlist />
       <Newsletter />
       <Footer />
-      <AuthModal
-        open={authOpen}
-        onClose={() => { setAuthOpen(false); setPendingPlan(null); }}
-        onAuth={onAuth}
-        pendingPlan={pendingPlan}
-      />
     </main>
   );
 }
